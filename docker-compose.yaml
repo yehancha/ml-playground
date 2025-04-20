@@ -13,5 +13,5 @@ services:
     ports:
       - "3010:3010"
     environment:
-      AVAILABLE_MODELS: echo,advanced
+      AVAILABLE_MODELS: echo,advanced,complex
       

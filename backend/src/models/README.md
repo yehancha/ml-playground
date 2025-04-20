@@ -1,48 +1,54 @@
 # Model Architecture
 
-This directory contains the model architecture for the LLM Playground backend. The system is designed to allow multiple model implementations that can be swapped at runtime.
+This directory contains the model architecture for the LLM Playground backend. The system is designed to allow multiple model implementations that can be automatically discovered and used at runtime.
 
 ## Overview
 
 The model architecture consists of the following components:
 
 - **BaseModel**: An abstract base class that defines the interface all models must implement
-- **Model Implementations**: Concrete model classes that extend BaseModel
-- **ModelManager**: A factory/manager class that handles model selection and instantiation
-- **Configuration**: Settings that control which model is active
+- **Model Implementations**: Concrete model classes that extend BaseModel, stored in the implementations directory
+- **ModelManager**: A factory/manager class that handles automatic model discovery and instantiation
+- **Configuration**: Optional environment variables to filter available models
 
 ## Directory Structure
 
 ```
 models/
-├── README.md              # This documentation
-├── baseModel.js           # Abstract base class for all models
-├── echoModel.js           # Simple echo model implementation
-├── advancedModel.js       # Advanced model with conversation state
-├── modelManager.js        # Factory/manager for model instances
-└── index.js               # Exports all model components
+├── README.md                     # This documentation
+├── baseModel.js                  # Abstract base class for all models
+├── modelManager.js               # Factory/manager for model instances
+└── implementations/              # Directory containing all model implementations
+    ├── echoModel.js              # Simple echo model implementation
+    ├── advancedModel.js          # Advanced model with conversation state
+    └── complex/                  # Example of a directory-based complex model
+        ├── index.js              # Main model implementation file
+        └── utils.js              # Supporting utilities for the model
 ```
 
 ## How It Works
 
 1. The `baseModel.js` defines the interface that all models must implement
-2. Concrete model implementations extend BaseModel and provide specific behavior
-3. The `modelManager.js` handles model instantiation and selection
-4. The server routes API requests to the active model via the ModelManager
+2. Model implementations are stored in the `implementations/` directory, either as individual files or as directories with an index.js entry point
+3. The `modelManager.js` automatically discovers all models in the implementations directory at startup
+4. Models are identified by the name returned from their `getModelName()` method
+5. The ModelManager can optionally filter available models based on the AVAILABLE_MODELS environment variable
+6. The server routes API requests to the requested model via the ModelManager
 
 ## Adding New Models
 
 To add a new model to the system:
 
-1. Create a new file `yourNewModel.js` in the models directory
-2. Extend the BaseModel class and implement required methods:
+1. **For simple models**: Create a new file in the `implementations/` directory (e.g., `implementations/yourNewModel.js`)
+2. **For complex models**: Create a new directory in `implementations/` with an `index.js` file (e.g., `implementations/yourComplexModel/index.js`)
+3. Extend the BaseModel class and implement required methods:
 
 ```javascript
-const BaseModel = require('./baseModel');
+const BaseModel = require('../baseModel');  // Adjust path as needed
 
 class YourNewModel extends BaseModel {
   constructor() {
-    super('YourNewModel');
+    super('YourNewModel');  // This name will be used to identify the model
     // Initialize any model-specific state
   }
 
@@ -58,66 +64,22 @@ class YourNewModel extends BaseModel {
 module.exports = YourNewModel;
 ```
 
-3. Add your model to the available models in `../config/modelConfig.js`:
-
-```javascript
-const MODELS = {
-  ECHO: 'echo',
-  ADVANCED: 'advanced',
-  YOUR_NEW_MODEL: 'yournewmodel'
-};
-```
-
-4. Update the ModelManager to create instances of your model:
-
-```javascript
-// In _createModelInstance method in modelManager.js
-switch (modelName) {
-  case MODELS.ECHO:
-    return new EchoModel();
-  case MODELS.ADVANCED:
-    return new AdvancedModel();
-  case MODELS.YOUR_NEW_MODEL:
-    return new YourNewModel();
-  default:
-    console.warn(`Unknown model ${modelName}, falling back to default model`);
-    return new EchoModel();
-}
-```
-
-5. Export your model in the index.js file:
-
-```javascript
-const YourNewModel = require('./yourNewModel');
-
-module.exports = {
-  // ... existing exports
-  YourNewModel,
-};
-```
+That's it! The ModelManager will automatically discover and make available your new model on the next server startup. No additional configuration or code changes are required.
 
 ## Configuration
 
-Models are configured through the `../config/modelConfig.js` file. The default model can be set using the `DEFAULT_MODEL` environment variable.
+Models are automatically discovered, but you can control which ones are available through the environment:
 
-## API Usage
+### AVAILABLE_MODELS
 
-The API uses the ModelManager to get responses from the active model:
+To restrict which models are available, set the `AVAILABLE_MODELS` environment variable to a comma-separated list of model names:
 
-```javascript
-const modelManager = require('./models/modelManager');
-
-// Get the active model
-const activeModel = modelManager.getActiveModel();
-
-// Generate a response
-const response = await activeModel.generateResponse(userMessage, conversationHistory);
+```
+AVAILABLE_MODELS=echo,advanced
 ```
 
-You can also switch models at runtime:
+If this variable is not set, all discovered models will be available.
 
-```javascript
-// Switch to a different model
-modelManager.setActiveModel('advanced');
-```
+## Forwarding Requests
 
+The server handles model selection based on the client's request, automatically routing to the appropriate model implementation according to the defined model in the request.

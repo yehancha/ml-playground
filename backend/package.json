@@ -4,7 +4,6 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node src/testModels.js",
     "dev": "nodemon server.js"
   },
   "dependencies": {

@@ -1,4 +1,4 @@
-const BaseModel = require('./baseModel');
+const BaseModel = require('../baseModel');
 
 /**
  * EchoModel - A simple model that echoes back the user's message

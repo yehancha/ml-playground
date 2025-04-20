@@ -1,4 +1,4 @@
-const BaseModel = require('./baseModel');
+const BaseModel = require('../baseModel');
 
 /**
  * AdvancedModel - A model that responds differently to greetings, farewells, and other messages
