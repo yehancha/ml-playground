@@ -12,3 +12,6 @@ services:
     build: ./backend
     ports:
       - "3010:3010"
+    environment:
+      AVAILABLE_MODELS: echo,advanced
+      
