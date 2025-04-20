@@ -1,0 +1,8 @@
+{
+  "name": "llm-playground",
+  "version": "0.1.0",
+  "scripts": {
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run start"
+  }
+}
