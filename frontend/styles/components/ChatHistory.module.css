@@ -1,0 +1,15 @@
+.chatHistory {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: #999;
+}
+

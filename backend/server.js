@@ -15,8 +15,16 @@ app.use(cors({
   }
 }));
 
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from the Backend!' });
+app.use(express.json());
+
+app.post('/api/prompt', (req, res) => {
+  const userMessage = req.body.content || 'No message received';
+  const conversationHistory = req.body.conversationHistory || [];
+  
+  res.json({ 
+    actor: 'model',
+    content: `You said: "${userMessage}" - Hello from the Backend!` 
+  });
 });
 
 app.listen(port, () => {

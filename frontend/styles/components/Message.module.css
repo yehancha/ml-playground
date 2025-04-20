@@ -1,0 +1,27 @@
+.messageContainer {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.userMessage {
+  justify-content: flex-end;
+}
+
+.modelMessage {
+  justify-content: flex-start;
+}
+
+.messageBubble {
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.userMessage .messageBubble {
+  background-color: #dcf8c6;
+}
+
+.modelMessage .messageBubble {
+  background-color: #f1f0f0;
+}
+

@@ -1,24 +1,45 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import ChatHistory from '../components/ChatHistory';
+import Form from '../components/Form';
+import styles from '../styles/pages/index.module.css';
 
 function HomePage() {
-  const [message, setMessage] = useState('Loading...');
+  const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
+  const sendMessage = async (userMessage) => {
+    const userMessageObj = { actor: 'user', content: userMessage };
+    const newMessages = [...messages, userMessageObj];
+    setMessages(newMessages);
+    
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     if (backendUrl) {
-      fetch(`${backendUrl}/api/hello`)
-        .then(response => response.json())
-        .then(data => setMessage(data.message))
-        .catch(() => setMessage('Failed to fetch message'));
+      try {
+        const response = await fetch(`${backendUrl}/api/prompt`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            content: userMessage,
+            conversationHistory: newMessages
+          })
+        });
+        const data = await response.json();
+        
+        setMessages([...newMessages, data]);
+      } catch (error) {
+        setMessages([...newMessages, { actor: 'model', content: 'Failed to fetch message' }]);
+      }
     } else {
-      setMessage('Backend URL not configured.');
+      setMessages([...newMessages, { actor: 'model', content: 'Backend URL not configured.' }]);
     }
-  }, []);
+  };
 
   return (
-    <div>
-      <h1>Simple Next.js Frontend</h1>
-      <p>{message}</p>
+    <div className={styles.container}>
+      <h1 className={styles.title}>LLM Playground</h1>
+      <ChatHistory messages={messages} />
+      <Form onSubmit={sendMessage} />
     </div>
   );
 }
