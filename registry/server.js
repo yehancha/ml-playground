@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const ServiceRegistry = require('./src/serviceRegistry');
+const healthRoutes = require('./src/routes/healthRoutes');
+const registryRoutes = require('./src/routes/registryRoutes');
+const servicesRoutes = require('./src/routes/servicesRoutes');
 
 // Environment variables with defaults
 const PORT = process.env.REGISTRY_PORT || 3040;
@@ -15,115 +18,16 @@ app.use((req, res, next) => {
   next();
 });
 
-// Create service registry
 const registry = new ServiceRegistry(HEALTH_CHECK_INTERVAL);
 
-// Middleware
+// Use middleware
 app.use(express.json());
 app.use(cors());
 
-/**
- * Register a service
- * POST /register
- * Request body: { url: string, models: [{ name: string, type: string }] }
- */
-app.post('/register', (req, res) => {
-  const { url, models } = req.body;
-  
-  if (!url || !models) {
-    return res.status(400).json({
-      success: false,
-      error: 'Missing required fields: url and models'
-    });
-  }
-  
-  const success = registry.registerService(url, models);
-  
-  if (success) {
-    res.status(200).json({
-      success: true,
-      message: `Service registered: ${url}`
-    });
-  } else {
-    res.status(400).json({
-      success: false,
-      error: 'Failed to register service'
-    });
-  }
-});
-
-/**
- * Unregister a service
- * DELETE /unregister
- * Request body: { url: string }
- */
-app.delete('/unregister', (req, res) => {
-  const { url } = req.body;
-  
-  if (!url) {
-    return res.status(400).json({
-      success: false,
-      error: 'Missing required field: url'
-    });
-  }
-  
-  const success = registry.unregisterService(url);
-  
-  if (success) {
-    res.status(200).json({
-      success: true,
-      message: `Service unregistered: ${url}`
-    });
-  } else {
-    res.status(404).json({
-      success: false,
-      error: 'Service not found or already unregistered'
-    });
-  }
-});
-
-/**
- * Get all registered services
- * GET /services
- */
-app.get('/services', (req, res) => {
-  const services = registry.getAllServices();
-  
-  res.status(200).json({
-    success: true,
-    services: services
-  });
-});
-
-/**
- * Get services by type
- * GET /services/types/:type
- */
-app.get('/services/types/:type', (req, res) => {
-  const type = req.params.type;
-  
-  if (!type) {
-    return res.status(400).json({
-      success: false,
-      error: 'Missing required parameter: type'
-    });
-  }
-  
-  const result = registry.getServicesByType(type);
-  
-  res.status(200).json(result);
-});
-
-/**
- * Health endpoint for the registry itself
- * GET /health
- */
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString()
-  });
-});
+// Attach routes
+healthRoutes.attach(app);
+registryRoutes.attach(app, registry);
+servicesRoutes.attach(app, registry);
 
 // Start the server
 app.listen(PORT, () => {
@@ -142,4 +46,3 @@ function shutdown() {
   registry.stopHealthChecks();
   process.exit(0);
 }
-

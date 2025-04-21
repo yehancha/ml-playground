@@ -1,3 +1,5 @@
+const HealthChecker = require('./healthChecker');
+
 /**
  * Service Registry for managing backend services
  */
@@ -11,9 +13,8 @@ class ServiceRegistry {
     
     // Index services by model name for quick lookups
     this.modelIndex = {};
-    
-    // Health check interval in milliseconds
-    this.healthCheckInterval = healthCheckInterval;
+
+    this.checker = new HealthChecker(this, healthCheckInterval);
     
     console.log(`ServiceRegistry initialized with health check interval: ${healthCheckInterval}ms`);
   }
@@ -189,76 +190,12 @@ class ServiceRegistry {
     }
   }
 
-  /**
-   * Run health checks on all registered services
-   * @returns {Promise<void>}
-   */
-  async runHealthChecks() {
-    const serviceUrls = Object.keys(this.services);
-    if (serviceUrls.length === 0) {
-      console.log('No services to health check');
-      return;
-    }
-    
-    const checkPromises = serviceUrls.map(async (url) => {
-      try {
-        const healthUrl = `${url}/health`;
-        const response = await fetch(healthUrl, { 
-          method: 'GET',
-          timeout: 3000 // 3 second timeout
-        });
-        
-        if (response.ok) {
-          this.updateServiceHealth(url, true);
-          return true;
-        } else {
-          console.warn(`Health check failed for ${url}: ${response.status}`);
-          this.updateServiceHealth(url, false);
-          return false;
-        }
-      } catch (error) {
-        console.error(`Health check error for ${url}:`, error.message);
-        this.updateServiceHealth(url, false);
-        return false;
-      }
-    });
-    
-    const results = await Promise.all(checkPromises);
-    const failedCount = results.filter(result => !result).length;
-    
-    if (failedCount > 0) {
-      console.warn(`${failedCount} services failed health checks`);
-    } else {
-      console.log(`All ${serviceUrls.length} services are healthy`);
-    }
-  }
-
-  /**
-   * Start periodic health checks
-   */
   startHealthChecks() {
-    if (this._healthCheckInterval) {
-      clearInterval(this._healthCheckInterval);
-    }
-    
-    this._healthCheckInterval = setInterval(() => {
-      this.runHealthChecks().catch(error => {
-        console.error('Error during health check run:', error);
-      });
-    }, this.healthCheckInterval);
-    
-    console.log(`Health checks scheduled every ${this.healthCheckInterval}ms`);
+    this.checker.startHealthChecks();
   }
 
-  /**
-   * Stop periodic health checks
-   */
   stopHealthChecks() {
-    if (this._healthCheckInterval) {
-      clearInterval(this._healthCheckInterval);
-      this._healthCheckInterval = null;
-      console.log('Health checks stopped');
-    }
+    this.checker.stopHealthChecks();
   }
 }
 
