@@ -41,7 +41,7 @@ class AdvancedModel extends BaseModel {
   ];
   
   constructor() {
-    super('Advanced');
+    super(BaseModel.types.CHAT, 'Advanced');
   }
   
   /**
@@ -83,11 +83,11 @@ class AdvancedModel extends BaseModel {
 
   /**
    * Generates a response based on the user message
-   * @param {string} userMessage - The message from the user
-   * @param {Array} conversationHistory - The conversation history (not used in this model)
+   * @param {Object} input - Input containing userMessage and conversationHistory
    * @returns {Object} Response object with actor and content
    */
-  async generateResponse(userMessage, conversationHistory) {
+  async process(input) {
+    const { userMessage, conversationHistory } = input;
     let response;
     
     if (this.isGreeting(userMessage)) {

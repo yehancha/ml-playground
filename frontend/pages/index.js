@@ -1,85 +1,63 @@
 import React, { useState } from 'react';
-import ChatHistory from '../components/ChatHistory';
-import Form from '../components/Form';
+import Chat from '../components/Chat';
 import ModelSelection from '../components/ModelSelection';
+import ModelTypeSelection from '../components/ModelTypeSelection';
+import Summarize from '../components/Summarize';
 import styles from '../styles/pages/index.module.css';
 
-function HomePage() {
-  const [messages, setMessages] = useState([]);
+const Home = () => {
   const [selectedModel, setSelectedModel] = useState('');
-  const [conversationStarted, setConversationStarted] = useState(false);
+  const [isModelSelectionDisabled, setIsModelSelectionDisabled] = useState(false);
+  const [activeTab, setActiveTab] = useState('chat');
 
-  const sendMessage = async (userMessage) => {
-    if (!selectedModel) {
-      alert('Please select a model before sending a message.');
-      return;
-    }
-
-    const userMessageObj = { actor: 'user', content: userMessage };
-    const newMessages = [...messages, userMessageObj];
-    setMessages(newMessages);
-    
-    if (!conversationStarted) {
-      setConversationStarted(true);
-    }
-    
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-    if (backendUrl) {
-      try {
-        const response = await fetch(`${backendUrl}/api/prompt`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            content: userMessage,
-            conversationHistory: newMessages,
-            modelName: selectedModel
-          })
-        });
-        const data = await response.json();
-        
-        setMessages([...newMessages, data]);
-      } catch (error) {
-        console.log(error);
-        setMessages([...newMessages, { actor: 'model', content: 'Failed to fetch message.' }]);
-      }
-    } else {
-      setMessages([...newMessages, { actor: 'model', content: 'Backend URL not configured.' }]);
-    }
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    setIsModelSelectionDisabled(false);
   };
 
-  const startNewConversation = () => {
-    setMessages([]);
-    setConversationStarted(false);
-  };
-
-  const handleModelSelect = (model) => {
-    setSelectedModel(model);
+  const handleChatEvent = (event) => {
+    switch (event) {
+      case 'MESSAGE_SENT':
+        setIsModelSelectionDisabled(true);
+        break;
+      case 'NEW_CONVERSATION':
+        setIsModelSelectionDisabled(false);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>LLM Playground</h1>
-      <div className={styles.controlPanel}>
-        <ModelSelection 
-          onModelSelect={handleModelSelect} 
-          selectedModel={selectedModel}
-          disabled={conversationStarted}
-        />
-        {conversationStarted && (
-          <button 
-            onClick={startNewConversation}
-            className={styles.newConversationButton}
-          >
-            New Conversation
-          </button>
+      <ModelTypeSelection 
+        activeTab={activeTab} 
+        onTabChange={handleTabChange}
+      />
+      
+      <ModelSelection
+        modelType={activeTab.toUpperCase()}
+        selectedModel={selectedModel}
+        onModelSelect={setSelectedModel}
+        disabled={activeTab === 'chat' ? isModelSelectionDisabled : false}
+      />
+
+      <div className={styles.content}>
+        {activeTab === 'chat' ? (
+          <Chat
+            selectedModel={selectedModel}
+            onModelSelect={setSelectedModel}
+            onChatEvent={handleChatEvent}
+          />
+        ) : (
+          <Summarize
+            selectedModel={selectedModel}
+            onModelSelect={setSelectedModel}
+          />
         )}
       </div>
-      <ChatHistory messages={messages} />
-      <Form onSubmit={sendMessage} />
     </div>
   );
-}
+};
 
-export default HomePage;
+export default Home;

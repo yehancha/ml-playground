@@ -6,16 +6,16 @@ const BaseModel = require('../baseModel');
 class EchoModel extends BaseModel {
 
   constructor() {
-    super('Echo');
+    super(BaseModel.types.CHAT, 'Echo');
   }
 
   /**
-   * Generates a response by echoing back the user's message
-   * @param {string} userMessage - The message from the user
-   * @param {Array} conversationHistory - The conversation history (not used in this model)
+   * Generates a response based on the user message
+   * @param {Object} input - Input containing userMessage and conversationHistory
    * @returns {Object} Response object with actor and content
    */
-  async generateResponse(userMessage, conversationHistory) {
+  async process(input) {
+    const { userMessage, conversationHistory } = input;
     return {
       actor: 'model',
       content: `You said: "${userMessage}" - Hello from the Echo Model!`

@@ -52,7 +52,7 @@ class YourNewModel extends BaseModel {
     // Initialize any model-specific state
   }
 
-  async generateResponse(userMessage, conversationHistory) {
+  async process(input) {
     // Implement your model's response generation logic
     return {
       actor: 'model',

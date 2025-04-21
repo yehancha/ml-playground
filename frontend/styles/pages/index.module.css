@@ -1,43 +1,9 @@
 .container {
-  max-width: 800px;
   margin: 0 auto;
+  max-width: 800px;
   padding: 2rem;
 }
 
-.title {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #333;
-}
-
-.controlPanel {
-  display: flex;
-  align-items: self-start;
-  margin-bottom: 1rem;
-}
-
-.newConversationButton {
-  padding: 0.5rem 1rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  margin-left: 1rem;
-}
-
-.newConversationButton:hover {
-  background-color: #388e3c;
-}
-
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.title {
-  margin-bottom: 20px;
-  color: #333;
+.content {
+  margin-top: 2rem;
 }

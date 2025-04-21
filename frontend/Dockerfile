@@ -15,8 +15,8 @@ RUN npm run build
 FROM node:18-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/.next ./.next
 COPY package.json package-lock.json ./
 RUN npm install --omit=dev
+COPY --from=builder /app/.next ./.next
 EXPOSE 3000
 CMD ["npm", "start"]

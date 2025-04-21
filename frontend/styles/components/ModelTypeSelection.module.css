@@ -1,0 +1,32 @@
+.modelTypeContainer {
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem 0;
+}
+
+.typeButton {
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 0.5rem;
+  color: #4b5563;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.typeButton:hover {
+  background-color: #e5e7eb;
+}
+
+.typeButton.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+.typeButton.active:hover {
+  background-color: #1d4ed8;
+}
+

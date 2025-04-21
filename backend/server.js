@@ -21,10 +21,8 @@ app.use(express.json());
 /**
  * Prompts a given model with a user message and conversation history
  */
-app.post('/api/prompt', async (req, res) => {
+app.post('/api/process/chat', async (req, res) => {
   try {
-    const userMessage = req.body.content || 'No message received';
-    const conversationHistory = req.body.conversationHistory || [];
     const modelName = req.body.modelName;
     
     if (!modelName) {
@@ -48,7 +46,7 @@ app.post('/api/prompt', async (req, res) => {
     const model = modelResult.model;
     console.log(`Using model: ${model.getModelName()}`);
     
-    const response = await model.generateResponse(userMessage, conversationHistory);
+    const response = await model.process(req.body);
     
     res.json(response);
   } catch (error) {
@@ -61,11 +59,67 @@ app.post('/api/prompt', async (req, res) => {
 });
 
 /**
+ * Prompts a given model with a original text and summarize it
+ */
+app.post('/api/process/summarize', async (req, res) => {
+  try {
+    const modelName = req.body.modelName;
+    
+    if (!modelName) {
+      return res.status(400).json({
+        summary: 'Error: Model name must be specified in the request.',
+        error: 'Missing model name'
+      });
+    }
+    
+    const modelResult = modelManager.getModelByName(modelName);
+    
+    if (!modelResult.success) {
+      return res.status(400).json({
+        summary: `Error: ${modelResult.error}`,
+        error: modelResult.error
+      });
+    }
+    
+    const model = modelResult.model;
+    console.log(`Using model: ${model.getModelName()}`);
+    
+    const response = await model.process(req.body);
+    
+    res.json(response);
+  } catch (error) {
+    console.error('Error processing prompt:', error);
+    res.status(500).json({
+      summary: 'Error processing your request. Please try again.'
+    });
+  }
+});
+
+/**
  * Get available models
  */
 app.get('/api/models', (req, res) => {
   try {
     const availableModels = modelManager.getAvailableModels();
+    
+    res.json({ 
+      availableModels: availableModels
+    });
+  } catch (error) {
+    console.error('Error getting models:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error retrieving models' 
+    });
+  }
+});
+
+/**
+ * Get available models for type
+ */
+app.get('/api/models/types/:type', (req, res) => {
+  try {
+    const availableModels = modelManager.getAvailableModelsByType(req.params.type);
     
     res.json({ 
       availableModels: availableModels

@@ -12,16 +12,16 @@ class ComplexModel extends BaseModel {
   ];
 
   constructor() {
-    super('Complex');
+    super(BaseModel.types.CHAT, 'Complex');
   }
 
   /**
-   * Generate a response using the complex model's logic
-   * @param {string} userMessage - The message from the user
-   * @param {Array} conversationHistory - The conversation history
+   * Generates a response based on the user message
+   * @param {Object} input - Input containing userMessage and conversationHistory
    * @returns {Object} Response object with actor and content
    */
-  async generateResponse(userMessage, conversationHistory) {
+  async process(input) {
+    const { userMessage, conversationHistory } = input;
     const processedMessage = utils.process(userMessage, conversationHistory);
     const randomExample = this.examples[Math.floor(Math.random() * this.examples.length)];
     

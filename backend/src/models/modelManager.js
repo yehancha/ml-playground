@@ -64,16 +64,20 @@ class ModelManager {
         // Create a temporary instance to get the model name
         if (typeof ModelClass === 'function') {
           const tempInstance = new ModelClass();
-          if (typeof tempInstance.getModelName === 'function') {
+          if (typeof tempInstance.getModelName === 'function' || typeof tempInstance.getModelType === 'function') {
             const modelName = tempInstance.getModelName().toLowerCase();
+            const modelType = tempInstance.getModelType();
             
             // Store the model class
             this.modelClasses[modelName] = ModelClass;
-            discoveredModels.push(modelName);
+            discoveredModels.push({
+              type: modelType,
+              name: modelName,
+            });
             
             console.log(`Discovered model: ${modelName} from ${entry.name}`);
           } else {
-            console.warn(`Skipping ${entry.name}: missing getModelName() method`);
+            console.warn(`Skipping ${entry.name}: missing getModelName() or getModelType() method.`);
           }
         } else {
           console.warn(`Skipping ${entry.name}: not a valid model class`);
@@ -105,16 +109,16 @@ class ModelManager {
     
     // Filter discovered models to only include those in the allowed list
     this.availableModels = this.discoveredModels.filter(model => 
-      allowedModels.includes(model)
+      allowedModels.includes(model.name)
     );
     
     if (this.availableModels.length === 0) {
       console.warn(`No models matched between discovered models and AVAILABLE_MODELS environment variable`);
-      console.warn(`Discovered: ${this.discoveredModels.join(', ')}`);
+      console.warn(`Discovered: ${this.discoveredModels.map(model => model.name).join(', ')}`);
       console.warn(`Allowed: ${allowedModels.join(', ')}`);
     } else {
       console.log(`Filtered models based on AVAILABLE_MODELS environment variable`);
-      console.log(`Available models: ${this.availableModels.join(', ')}`);
+      console.log(`Available models: ${this.availableModels.map(model => model.name).join(', ')}`);
     }
   }
 
@@ -134,7 +138,7 @@ class ModelManager {
     
     const normalizedName = modelName.toLowerCase();
     
-    if (!this.availableModels.includes(normalizedName)) {
+    if (!this.availableModels.map(model => model.name).includes(normalizedName)) {
       return {
         success: false,
         error: `Invalid model: ${modelName}. Available models: ${this.availableModels.join(', ')}`,
@@ -168,7 +172,16 @@ class ModelManager {
    * @returns {Array} - Array of available model names
    */
   getAvailableModels() {
-    return this.availableModels;
+    return this.availableModels.map(model => model.name);
+  }
+  
+  /**
+   * Get the list of models for type
+   * @param {string} type - Type of the models to return 
+   * @returns {Array} - Array of available model names
+   */
+  getAvailableModelsByType(type) {
+    return this.availableModels.filter(model => model.type === type).map(model => model.name);
   }
 
   /**
