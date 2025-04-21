@@ -12,5 +12,10 @@ services:
     build: ./backend
     ports:
       - "3010:3010"
-    environment: []
+    environment:
+      LOGGER_URL: http://host.docker.internal:3020
+  logger:
+    build: ./logger
+    ports:
+      - "3020:3020"
       

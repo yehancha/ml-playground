@@ -7,8 +7,11 @@ up: install
 	@echo "Starting Docker Compose..."
 	docker-compose up --build
 
+down:
+	docker-compose down
+
 clean:
 	@echo "Stopping Docker Compose..."
 	docker-compose down -v
 
-.PHONY: install up clean
+.PHONY: install up down clean
