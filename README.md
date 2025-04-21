@@ -73,7 +73,7 @@ nextjs-playground/
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `NEXT_PUBLIC_BACKEND_URL` | URL where the backend is hosted | N/A |
+| `NEXT_PUBLIC_API_URL` | URL where the backend is hosted | N/A |
 
 ## Docker Support
 
@@ -92,7 +92,7 @@ Frontend:
 ```bash
 cd frontend
 docker build -t llm-playground-frontend .
-docker run -p 3000:3000 -e NEXT_PUBLIC_BACKEND_URL=http://localhost:3010 llm-playground-frontend
+docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:3010 llm-playground-frontend
 ```
 
 ## Adding New Models

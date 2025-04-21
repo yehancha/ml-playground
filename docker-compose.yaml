@@ -1,22 +1,52 @@
 services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3030:3010"
+    environment:
+      - BACKEND_PORT=3010
+      - SERVICE_URL=http://backend:3030
+      - LOGGER_URL=http://logger:3040
+      - GENAI_API_KEY=${GENAI_API_KEY}
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+  logger:
+    build:
+      context: ./logger
+    ports:
+      - "3040:3040"
+    environment:
+      - LOGGER_PORT=3040
+      - REGISTRY_URL=http://registry:3020
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3040/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   frontend:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_BACKEND_URL: "http://localhost:3010"
+        NEXT_PUBLIC_API_URL: "http://localhost:3030"
+        NEXT_PUBLIC_LOGGER_URL: "http://localhost:3040"
     ports:
       - "3000:3000"
     depends_on:
-      - backend
-  backend:
-    build: ./backend
-    ports:
-      - "3010:3010"
-    environment:
-      LOGGER_URL: http://host.docker.internal:3020
-      GENAI_API_KEY: ${GENAI_API_KEY}
-  logger:
-    build: ./logger
-    ports:
-      - "3020:3020"
-      
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

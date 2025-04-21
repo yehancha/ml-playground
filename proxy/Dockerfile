@@ -3,5 +3,5 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
-EXPOSE 3040
+EXPOSE 3020
 CMD ["npm", "start"]

@@ -18,10 +18,10 @@ const Chat = ({ selectedModel, onChatEvent }) => {
     
     onChatEvent('MESSAGE_SENT');
     
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-    if (backendUrl) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (apiUrl) {
       try {
-        const response = await fetch(`${backendUrl}/api/process/chat`, {
+        const response = await fetch(`${apiUrl}/api/process/chat`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -36,7 +36,6 @@ const Chat = ({ selectedModel, onChatEvent }) => {
         
         setMessages([...newMessages, data]);
       } catch (error) {
-        console.log(error);
         setMessages([...newMessages, { actor: 'model', content: 'Failed to fetch message.' }]);
       }
     } else {

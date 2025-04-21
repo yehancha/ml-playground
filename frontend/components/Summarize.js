@@ -22,16 +22,16 @@ const Summarize = ({ selectedModel }) => {
     setError(null);
     setSummary('');
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     
-    if (!backendUrl) {
-      setError('Backend URL not configured');
+    if (!apiUrl) {
+      setError('API URL not configured');
       setLoading(false);
       return;
     }
 
     try {
-      const response = await fetch(`${backendUrl}/api/process/summarize`, {
+      const response = await fetch(`${apiUrl}/api/process/summarize`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

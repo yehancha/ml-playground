@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const Datastore = require('nedb');
 const app = express();
-const port = 3020;
+const port = 3040;
 
 const allowedOrigins = ['http://localhost:3000', 'http://localhost:3010'];
 
@@ -17,6 +17,12 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Simple logger middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 
 // Initialize an in-memory database
 const db = new Datastore();
@@ -80,6 +86,16 @@ app.post('/api/query', async (req, res) => {
     });
 });
 
+/**
+ * Health check endpoint
+ */
+app.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.listen(port, () => {
-  console.log(`Logger server listening at http://localhost:${port}`);
+  console.log(`Logger service listening at http://localhost:${port}`);
 });

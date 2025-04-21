@@ -17,7 +17,7 @@ class ModelManager {
     // Apply environment variable filtering after discovering models
     this.filterModelsByEnvironment();
     
-    console.log(`ModelManager initialized with available models: ${this.availableModels.join(', ')}`);
+    console.log(`ModelManager initialized with available models: ${this.availableModels.map(model => model.name).join(', ')}`);
   }
 
   /**
@@ -30,7 +30,6 @@ class ModelManager {
     // This is not a possibility since we already have sample implementations but just in case.
     if (!fs.existsSync(implementationsDir)) {
       fs.mkdirSync(implementationsDir);
-      console.log('Created implementations directory');
       return;
     }
     

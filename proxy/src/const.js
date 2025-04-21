@@ -1,0 +1,1 @@
+const REGISTRY_URL = process.env.REGISTRY_URL;

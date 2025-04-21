@@ -20,12 +20,12 @@ const ModelSelection = ({ onModelSelect, selectedModel, modelType, disabled }) =
         setLoading(true);
         setError(null);
         
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-        if (!backendUrl) {
-          throw new Error('Backend URL not configured');
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (!apiUrl) {
+          throw new Error('API URL not configured');
         }
 
-        const response = await fetch(`${backendUrl}/api/models/types/${modelType}`);
+        const response = await fetch(`${apiUrl}/api/models/types/${modelType}`);
         
         if (!response.ok) {
           throw new Error(`Error fetching models: ${response.statusText}`);

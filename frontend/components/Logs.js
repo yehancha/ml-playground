@@ -10,7 +10,8 @@ const Logs = () => {
     const fetchLogs = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('http://localhost:3020/api/query', {
+        const apiUrl = process.env.NEXT_PUBLIC_LOGGER_URL || process.env.NEXT_PUBLIC_API_URL;
+        const response = await fetch(`${apiUrl}/api/query`, {
           method: 'POST',
         });
         
@@ -48,7 +49,6 @@ const Logs = () => {
       return String(jsonData);
     }
   };
-
 
   if (isLoading) {
     return (
