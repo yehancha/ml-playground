@@ -63,29 +63,6 @@ class ServiceCache {
   }
 
   /**
-   * Check if a key exists in cache and is not expired
-   * @param {string} key - Cache key
-   * @returns {boolean} - True if key exists and is not expired
-   */
-  has(key) {
-    const entry = this.cache[key];
-    return entry && entry.expiry >= Date.now();
-  }
-
-  /**
-   * Invalidate a specific cache entry
-   * @param {string} key - Cache key to invalidate
-   */
-  invalidate(key) {
-    if (this.cache[key]) {
-      delete this.cache[key];
-      console.log(`Invalidated cache for key "${key}"`);
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * Clear all cache entries
    */
   clear() {

@@ -22,13 +22,11 @@ class LoadBalancer {
       return null;
     }
     
-    // Filter out any failed services
     const availableServices = services.filter(url => !this.failedServices.has(url));
-    
     if (availableServices.length === 0) {
       console.warn(`All services for key ${key} are marked as failed`);
       
-      // If all services are failed, try to recover failed one
+      // If all services are failed, try to recover one of them
       if (services.length > 0 && this.failedServices.length > 0) {
         const recoveredService = this.failedServices[0];
         console.log(`Attempting recovery of failed service: ${recoveredService}`);
@@ -39,15 +37,13 @@ class LoadBalancer {
       return null;
     }
     
-    // Initialize counter for this key if it doesn't exist
+    // Initialize counter for this key for the first time
     if (!this.serviceCounters[key]) {
       this.serviceCounters[key] = 0;
     }
     
     // Get the next index using round-robin
     const index = this.serviceCounters[key] % availableServices.length;
-    
-    // Increment the counter for next time
     this.serviceCounters[key]++;
     
     const selectedService = availableServices[index];
@@ -71,16 +67,6 @@ class LoadBalancer {
       console.log(`Recovered failed service after pullback: ${url}`);
     }, 30000); // 30 second recovery time
   }
-
-  /**
-   * Reset the load balancer state
-   */
-  reset() {
-    this.serviceCounters = {};
-    this.failedServices.clear();
-    console.log('LoadBalancer reset');
-  }
 }
 
 module.exports = LoadBalancer;
-
