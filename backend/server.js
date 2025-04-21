@@ -19,6 +19,12 @@ app.use(cors({
 app.use(express.json());
 
 app.use((req, res, next) => {
+  // We only log process requests
+  if (!req.originalUrl.includes('/process/')) {
+    next();
+    return;
+  }
+
   const startTime = new Date();
   const originalSend = res.send;
 

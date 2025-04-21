@@ -30,3 +30,27 @@
   background-color: #1d4ed8;
 }
 
+.logsButton {
+  background-color: #e0e7ff; /* Light purple/indigo */
+  border: none;
+  border-radius: 0.5rem;
+  color: #4b5563;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.logsButton:hover {
+  background-color: #c7d2fe; /* Slightly darker light purple/indigo */
+}
+
+.logsButton.active {
+  background-color: #6366f1; /* Purple/indigo */
+  color: white;
+}
+
+.logsButton.active:hover {
+  background-color: #4f46e5; /* Darker purple/indigo */
+}
+

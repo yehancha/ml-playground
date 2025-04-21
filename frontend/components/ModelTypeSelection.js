@@ -10,11 +10,19 @@ const ModelTypeSelection = ({ activeTab, onTabChange }) => {
       >
         Chat
       </button>
+
       <button
         className={`${styles.typeButton} ${activeTab === 'summarize' ? styles.active : ''}`}
         onClick={() => onTabChange('summarize')}
       >
         Summarize
+      </button>
+      
+      <button
+        className={`${styles.logsButton} ${activeTab === 'logs' ? styles.active : ''}`}
+        onClick={() => onTabChange('logs')}
+      >
+        Logs
       </button>
     </div>
   );

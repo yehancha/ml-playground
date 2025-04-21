@@ -1,0 +1,104 @@
+.container {
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.logsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.logCard {
+  display: flex;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.metadataColumn {
+  background-color: #f9fafb;
+  padding: 1rem;
+  width: 250px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.dataColumn {
+  flex: 1;
+  padding: 1rem;
+}
+
+.metadataItem {
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.metadataLabel {
+  display: block;
+  color: #6b7280;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+
+.metadataValue {
+  color: #374151;
+  font-weight: 400;
+}
+
+.jsonSection {
+  margin-bottom: 1rem;
+}
+
+.jsonLabel {
+  display: block;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.jsonContainer {
+  max-height: 300px;
+  overflow: auto;
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid #e2e8f0;
+}
+
+.jsonPre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 0.813rem;
+  font-family: monospace;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.error {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  margin: 1rem 0;
+}
+
+.title {
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}
+
+.noLogs {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
