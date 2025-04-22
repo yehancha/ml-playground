@@ -90,7 +90,7 @@ const Logs = () => {
                 </div>
                 <div className={styles.metadataItem}>
                   <span className={styles.metadataLabel}>Response Time</span>
-                  <span className={styles.metadataValue}>{log.responseTimeMs ? `${log.responseTimeMs} ms` : 'N/A'}</span>
+                  <span className={styles.metadataValue}>{log.responseTimeMs ? `${log.responseTimeMs} ms` : log.responseTimeMs === 0 ? '<1 ms' : 'N/A'}</span>
                 </div>
               </div>
               

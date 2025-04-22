@@ -6,7 +6,7 @@ services:
       - "3030:3010"
     environment:
       - BACKEND_PORT=3010
-      - SERVICE_URL=http://backend:3030
+      - SERVICE_URL=http://backend:3010
       - LOGGER_URL=http://logger:3040
       - GENAI_API_KEY=${GENAI_API_KEY}
     networks:
@@ -24,7 +24,6 @@ services:
       - "3040:3040"
     environment:
       - LOGGER_PORT=3040
-      - REGISTRY_URL=http://registry:3020
     networks:
       - app-network
     healthcheck:
