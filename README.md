@@ -1,19 +1,23 @@
-# NextJS Playground - LLM Chat Application
+# ML Playground - ML Product Testing Framework
 
-A full-stack application for experimenting with language models, featuring a clean Next.js frontend and a flexible Node.js backend with automatic model discovery.
+A full-stack application for experimenting with different ML models, featuring a clean Next.js frontend and a flexible backends (NodeJS, Python) with automatic model discovery.
 
 ## Project Overview
 
-This project provides a simple yet powerful environment for interacting with various language model implementations. It consists of:
+This project provides a simple environment for interacting with various ML model implementations. It consists of:
 
-- **Frontend**: A responsive Next.js application with a chat interface
-- **Backend**: A flexible Express server with pluggable model architecture
+- **Frontend**: For easily testing different types of ML models
+- **Backend**: For deploying ML models. Currently available in NodeJS and Python but easily extensible for other languages.
+- **Logger**: For collecting and storing logs for later analysis.
+- **Registry**: For service and model discovery.
+- **Proxy**: For single API entrypoint with load balancing.
 
 Key features:
-- Simple UI with real-time chat experience
-- Model selection dropdown to switch between different implementations
 - Easy-to-extend architecture for adding new model implementations
 - Automatic model discovery without configuration changes
+- Automatic service discover for quick deployment/removal
+- Support for multiple languages and easily extendable for new languages
+- Dynamically scalable as needed
 
 ## Getting Started
 
@@ -22,6 +26,7 @@ Key features:
 - Node.js 20 or higher
 - npm or yarn package manager
 - Docker for smooth experience
+- Python (optional)
 
 ### Installation and Setup
 
@@ -41,59 +46,100 @@ Key features:
    make clean
    ```
 
+* To bring the service up in cluster mode with service/model discovery:
+
+   ```bash
+   make up_cluster
+   make clean_cluster
+   ```
+
 ## Project Structure
 
 ```
-nextjs-playground/
-├── frontend/                # Next.js client application
-│   ├── components/          # React components
-│   ├── pages/               # Next.js pages
-│   ├── styles/              # CSS modules and styles
-│   └── package.json         # Frontend dependencies
-│
-└── backend/                 # Express server application
-    ├── src/                 # Source code
-    │   ├── config/          # Configuration files
-    │   └── models/          # Model system
-    │       ├── implementations/  # Model implementations
-    │       └── README.md         # Model documentation
-    ├── server.js            # Main server entry point
-    └── package.json         # Backend dependencies
+ml-playground
+├── backend                            # Service for containing deployed models
+│   ├── server.js
+│   └── src
+│       ├── middlewares                
+│       │   ├── cors.js
+│       │   └── logger.js              # Handles sending logs to logger service
+│       ├── models                     # All the deployed models
+│       │   ├── baseModel.js           # Abstract model. All the models extend from this
+│       │   ├── implementations
+│       │   │   ├── advancedModel.js   # Sample simple model in single file
+│       │   │   ├── complexModel       # Sample complex model with its own directory
+│       │   │   │   ├── index.js
+│       │   │   │   └── utils.js
+│       │   │   ├── ...
+│       │   └── modelManager.js        # Handles model discovery at startup
+│       ├── routes
+│       │   ├── healthRoutes.js        # Health related endpoints
+│       │   └── modelRoutes.js         # Endpoints to access models
+│       └── serviceRegistry.js         # Handles registering/unregistering with Registry service in cluster mode
+├── backend-py                         # Backend service similar to backend/ but in Python. Structure is the same
+│   ├── server.py
+│   └── src
+│       ├── middlewares
+│       │   ├── cors.py
+│       │   └── logger.py
+│       ├── models
+│       │   ├── baseModel.py
+│       │   ├── implementations
+│       │   │   ├── echoModel.py
+│       │   │   └── pySummary.py
+│       │   └── modelManager.py
+│       ├── routes
+│       │   ├── healthRoutes.py
+│       │   └── modelRoutes.py
+│       └── serviceRegistry.py
+├── frontend                           # GUI
+│   ├── components                     # All the React components
+│   │   ├── ...
+│   ├── pages                          # NextJS pages
+│   │   └── index.js
+│   └── styles                         # All the styles related to components and pages
+│       ├── components
+│       │   ├── ...
+│       └── pages
+│           └── ...
+├── logger                             # Service for collecting and storing logs
+│   ├── server.js
+│   └── src
+│       ├── db.js                      # In memory database
+│       ├── middlewares
+│       │   ├── cors.js
+│       │   └── requestLogger.js
+│       └── routes
+│           ├── healthRoutes.js
+│           └── logRoutes.js
+├── proxy                              # Single entrypoint in the cluster mode
+│   ├── server.js
+│   └── src
+│       ├── loadBalancer.js            # Load balancing across backend services and models
+│       ├── routes
+│       │   ├── backendRoutes.js       # Handles requests for backends
+│       │   ├── healthRoutes.js
+│       │   ├── loggerRoutes.js        # Handles requests for logger
+│       │   └── registryRoutes.js      # Handles available-model queries
+│       ├── serviceCache.js            # Short-term cache for performance and efficiency
+│       ├── serviceUtils.js            # Helper for service selection
+│       └── upstreamHandler.js         # Handles upstream connections
+└── registry                           # Service registry
+    ├── server.js
+    └── src
+        ├── healthChecker.js           # Check health of registered services
+        ├── routes
+        │   ├── healthRoutes.js
+        │   ├── registryRoutes.js
+        │   └── servicesRoutes.js
+        └── serviceRegistry.js         # Maintain the registrations
 ```
-
-## Environment Variables
-
-### Backend
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `AVAILABLE_MODELS` | Comma-separated list of models to make available | N/A |
-
-### Frontend
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_API_URL` | URL where the backend is hosted | N/A |
 
 ## Docker Support
 
-Both the frontend and backend include Dockerfiles for containerized deployment.
-
-### Building and Running with Docker
-
-Backend:
-```bash
-cd backend
-docker build -t llm-playground-backend .
-docker run -p 3010:3010 llm-playground-backend
-```
-
-Frontend:
-```bash
-cd frontend
-docker build -t llm-playground-frontend .
-docker run -p 3000:3000 -e NEXT_PUBLIC_API_URL=http://localhost:3010 llm-playground-frontend
-```
+All components include Dockerfiles for containerized deployment.
+Several docker-compose configurations are also available for different deployments.
+You are encouraged to use Makefile as the entrypoint for basic things without using `docker-compose` or `docker` directly.
 
 ## Adding New Models
 
@@ -106,33 +152,3 @@ The backend is designed to easily accommodate new model implementations:
 The new model will be automatically discovered and made available through the API.
 
 For detailed instructions on creating custom models, see the [Models Documentation](backend/src/models/README.md).
-
-## API Endpoints
-
-The backend exposes these primary endpoints:
-
-- `GET /api/models`: Returns a list of available model names
-- `POST /api/prompt`: Sends a prompt to a specified model and returns the response
-
-## Development
-
-### Frontend Development
-
-The frontend uses Next.js with React and CSS modules. To add new features:
-
-1. Modify or add components in the `frontend/components/` directory
-2. Add styles in the `frontend/styles/` directory
-3. Use the Next.js pages structure to add new routes
-
-### Backend Development
-
-The backend uses a modular Express.js architecture:
-
-1. The main server logic is in `backend/server.js`
-2. Model implementations are in `backend/src/models/implementations/`
-3. The model system is documented in `backend/src/models/README.md`
-
-## Documentation
-
-- [Model Architecture](backend/src/models/README.md)
-

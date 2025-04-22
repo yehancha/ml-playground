@@ -1,29 +1,27 @@
 # Model Architecture
 
-This directory contains the model architecture for the LLM Playground backend. The system is designed to allow multiple model implementations that can be automatically discovered and used at runtime.
+The system is designed to allow multiple model implementations that can be automatically discovered and used at runtime.
 
 ## Overview
 
 The model architecture consists of the following components:
 
 - **BaseModel**: An abstract base class that defines the interface all models must implement
-- **Model Implementations**: Concrete model classes that extend BaseModel, stored in the implementations directory
+- **Model Implementations**: Sample concrete model classes that extend BaseModel, stored in the implementations directory
 - **ModelManager**: A factory/manager class that handles automatic model discovery and instantiation
-- **Configuration**: Optional environment variables to filter available models
 
 ## Directory Structure
 
 ```
-models/
-├── README.md                     # This documentation
-├── baseModel.js                  # Abstract base class for all models
-├── modelManager.js               # Factory/manager for model instances
-└── implementations/              # Directory containing all model implementations
-    ├── echoModel.js              # Simple echo model implementation
-    ├── advancedModel.js          # Advanced model with conversation state
-    └── complex/                  # Example of a directory-based complex model
-        ├── index.js              # Main model implementation file
-        └── utils.js              # Supporting utilities for the model
+models                     # All the deployed models
+├── baseModel.js           # Abstract model. All the models extend from this
+├── implementations
+│   ├── advancedModel.js   # Sample simple model in single file
+│   ├── complexModel       # Sample complex model with its own directory
+│   │   ├── index.js
+│   │   └── utils.js
+│   ├── ...
+└── modelManager.js        # Handles model discovery at startup
 ```
 
 ## How It Works
@@ -48,7 +46,7 @@ const BaseModel = require('../baseModel');  // Adjust path as needed
 
 class YourNewModel extends BaseModel {
   constructor() {
-    super('YourNewModel');  // This name will be used to identify the model
+    super(BasrModel.types.YOUR_MODEL_TYPE, 'YourNewModel'); // The second param identifies your model uniquely
     // Initialize any model-specific state
   }
 
