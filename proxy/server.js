@@ -57,7 +57,7 @@ app.listen(PORT, () => {
     } catch (error) {
       console.error('Error purging expired cache entries:', error);
     }
-  }, 60000); // Every minute
+  }, 15000);
 });
 
 // Handle graceful shutdown

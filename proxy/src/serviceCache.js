@@ -7,7 +7,7 @@ class ServiceCache {
     this.cache = {};
     
     // Default Time-To-Live in milliseconds
-    this.defaultTtl = defaultTtl;
+    this.defaultTtl = Number(defaultTtl);
     
     console.log(`ServiceCache initialized with default TTL: ${defaultTtl}ms`);
   }
@@ -20,7 +20,7 @@ class ServiceCache {
    */
   set(key, data, ttl = this.defaultTtl) {
     // Calculate expiration time
-    const expiry = Date.now() + ttl;
+    const expiry = Date.now() + Number(ttl);
     
     // Store data with expiration
     this.cache[key] = {

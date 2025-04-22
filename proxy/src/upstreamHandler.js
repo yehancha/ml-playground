@@ -20,20 +20,20 @@ class UpstreamHandler {
    * @returns {Promise} - Promise that resolves when request is handled
    */
   async forwardToBackend(req, res, modelName) {
+    // Get available services for the model
+    const services = await this.serviceUtils.getServicesForModel(modelName, this.cache);
+
+    if (!services || services.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: `No services available for model: ${modelName}`
+      });
+    }
+
+    // Get next service to use (round-robin)
+    const serviceUrl = loadBalancer.getNextService(modelName, services);
+
     try {
-      // Get available services for the model
-      const services = await this.serviceUtils.getServicesForModel(modelName, this.cache);
-
-      if (!services || services.length === 0) {
-        return res.status(404).json({
-          success: false,
-          error: `No services available for model: ${modelName}`
-        });
-      }
-
-      // Get next service to use (round-robin)
-      const serviceUrl = loadBalancer.getNextService(modelName, services);
-
       if (!serviceUrl) {
         return res.status(503).json({
           success: false,
@@ -69,7 +69,7 @@ class UpstreamHandler {
 
             // Prevent infinite retry loops
             if (req.retryCount <= 3) {
-              return await forwardToBackend(req, res, modelName);
+              return await this.forwardToBackend(req, res, modelName);
             }
           }
         }
@@ -88,10 +88,23 @@ class UpstreamHandler {
       res.status(response.status).json(data);
     } catch (error) {
       console.error('Error forwarding request:', error);
-      res.status(500).json({
-        success: false,
-        error: `Failed to process request: ${error.message}`
-      });
+
+      loadBalancer.markServiceFailed(serviceUrl);
+
+      // Try another service if available
+      const remainingServices = services.filter(url => url !== serviceUrl);
+      req.retryCount = (req.retryCount || 0) + 1;
+      if (remainingServices.length > 0 && req.retryCount <= 3) {
+        console.log(`Retrying with another service for model ${modelName}`);
+        req.retryCount = (req.retryCount || 0) + 1;
+
+        return await this.forwardToBackend(req, res, modelName);
+      } else {
+        res.status(500).json({
+          success: false,
+          error: `Failed to process request: ${error.message}`
+        });
+      }
     }
   }
 

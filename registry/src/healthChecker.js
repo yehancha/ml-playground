@@ -12,7 +12,7 @@ class HealthChecker {
    * @returns {Promise<void>}
    */
   async runHealthChecks() {
-    const serviceUrls = Object.keys(this.serviceRegistry.services);
+    const serviceUrls = Object.keys(this.serviceRegistry.getAllServices());
     if (serviceUrls.length === 0) {
       console.log('No services to health check');
       return;

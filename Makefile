@@ -28,4 +28,16 @@ clean_cluster:
 	@echo "Stopping Docker Compose..."
 	docker-compose -f docker-compose-cluster.yaml down -v
 
-.PHONY: install up down clean install_cluster up_cluster
+up_cluster_w_py: install_cluster
+	@echo "Starting Docker Compose..."
+	docker-compose -f docker-compose-cluster-w-py.yaml up --build
+
+clean_cluster_w_py:
+	@echo "Stopping Docker Compose..."
+	docker-compose -f docker-compose-cluster-w-py.yaml down -v
+
+up_backend_py:
+	@echo "Starting backend-py..."
+	docker-compose -f docker-compose-cluster-w-py.yaml up backend-py --build
+
+.PHONY: install up down clean install_cluster up_cluster up_cluster_w_py
