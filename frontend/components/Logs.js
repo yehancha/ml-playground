@@ -20,7 +20,11 @@ const Logs = () => {
         }
         
         const data = await response.json();
-        setLogs(data);
+        // Ensure data has the expected structure
+        if (!data || !data.data) {
+          console.warn('API response missing data structure:', data);
+        }
+        setLogs(data || { data: [] });
         setError(null);
       } catch (err) {
         console.error('Error fetching logs:', err);
@@ -68,7 +72,7 @@ const Logs = () => {
 
   return (
     <div className={styles.container}>
-      {logs.length === 0 ? (
+      {!logs.data || logs.data.length === 0 ? (
         <p className={styles.noLogs}>No logs found.</p>
       ) : (
         <div className={styles.logsContainer}>

@@ -60,10 +60,13 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <ModelTypeSelection
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <div className={styles.headerRow}>
+        <h1 className={styles.title}>ML Playground</h1>
+        <ModelTypeSelection
+          activeTab={activeTab}
+          onTabChange={handleTabChange}
+        />
+      </div>
 
       {activeTab !== 'logs' && (
         <ModelSelection

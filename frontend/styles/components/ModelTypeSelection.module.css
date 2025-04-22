@@ -1,20 +1,21 @@
 .modelTypeContainer {
-  border-bottom: 1px solid #e5e7eb;
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  padding: 1rem 0;
+  gap: 0.25rem;
+  padding: 0;
 }
 
 .typeButton {
   background-color: #f3f4f6;
   border: none;
-  border-radius: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
   color: #4b5563;
   cursor: pointer;
   font-size: 1rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   transition: all 0.2s ease-in-out;
+  position: relative;
 }
 
 .typeButton:hover {
@@ -22,23 +23,28 @@
 }
 
 .typeButton.active {
-  background-color: #2563eb;
-  color: white;
+  background-color: #f3f4f6;
+  color: #2563eb;
+  font-weight: 600;
+  border-bottom: 3px solid #2563eb;
 }
 
 .typeButton.active:hover {
-  background-color: #1d4ed8;
+  background-color: #f3f4f6;
 }
 
 .logsButton {
   background-color: #e0e7ff; /* Light purple/indigo */
   border: none;
-  border-radius: 0.5rem;
+  border-bottom: 1px solid #c7d2fe;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
   color: #4b5563;
   cursor: pointer;
   font-size: 1rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   transition: all 0.2s ease-in-out;
+  position: relative;
 }
 
 .logsButton:hover {
@@ -46,11 +52,13 @@
 }
 
 .logsButton.active {
-  background-color: #6366f1; /* Purple/indigo */
-  color: white;
+  background-color: #e0e7ff;
+  color: #6366f1;
+  font-weight: 600;
+  border-bottom: 3px solid #6366f1;
 }
 
 .logsButton.active:hover {
-  background-color: #4f46e5; /* Darker purple/indigo */
+  background-color: #e0e7ff;
 }
 

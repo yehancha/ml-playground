@@ -4,6 +4,24 @@
   padding: 2rem;
 }
 
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.25rem;
+}
+
+.title {
+  color: #1a1a1a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  padding: 0.75rem 0;
+  flex: 1;
+}
+
 .content {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
